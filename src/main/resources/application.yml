@@ -1,0 +1,44 @@
+Server:
+  port: 9009
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+resilience4j.bulkhead:
+  instances:
+    bulkHeadCallService:
+      maxConcurrentCalls: 2 #maxConcurrentCalls: max number of concurrent calls allowed to service.
+      maxWaitDuration: 0s #maxWaitDuration: any additional requests will wait for the given duration. Otherwise it will go with default/fallback method.
+
+resilience4j.circuitBreaker:
+  instances:
+    circuitBreakerCallService:
+      registerHealthIndicator: true
+      permittedNumberOfCallsInHalfOpenState: 2 #The number of requests allowed in the HALF-OPEN state.
+      failureRateThreshold: 50 #Sets the percentage of failed calls required to open the circuit breaker
+      minimumNumberOfCalls: 5 #Specifies the minimum number of calls before evaluating whether the circuit breaker should open.
+      automaticTransitionFromOpenToHalfOpenEnabled: true #If true, the circuit breaker automatically transitions from open to half-open state after the wait duration.
+      waitDurationInOpenState: 10s #Specifies how long the circuit breaker stays open before transitioning to half-open state.
+
+resilience4j.ratelimiter:
+  instances:
+    rateLimiterCallService:
+      limitRefreshPeriod: 10s #Specifies the time window to count the requests.
+      limitForPeriod: 2 #Specifies how many requests or method invocations are allowed in the above limitRefreshPeriod.
+
+resilience4j.retry:
+    instances:
+      retryCallService:
+        maxAttempts: 3 #Max retries if service failed, including the initial call plus retries
+        waitDuration: 5s #Wait duration before each retry attempt
+
+resilience4j.timelimiter:
+    instances:
+      timeLimiterCallService:
+        timeout-duration: 2s #No response within specified time, fallback method gets invoked
