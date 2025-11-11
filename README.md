@@ -11,8 +11,11 @@ To avoid this, we can limit max concurrent thread to API-1 to 2, so that API-2 c
 
 # Circuit Breaker
 Prevents an application from repeatedly trying to execute an operation that is likely to fail. It has three states: closed (normal), open (failing), and half-open (testing).
+
 Closed: Initially, the circuit will be closed. Method calling API-B will work as usual. 
+
 Open: If API-B is failing with set percentage out of max calls, the circuit will be in open state and fallback method is invoked. 
+
 Half-open: After wait duration in open state completed, the circuit will be half-open. In this state few requests will be sent to actual service. If requests gets success, the circuit will be closed else open
 * permittedNumberOfCallsInHalfOpenState: 2 #The number of requests allowed in the HALF-OPEN state.
 * failureRateThreshold: 50 #Sets the percentage of failed calls required to open the circuit breaker
